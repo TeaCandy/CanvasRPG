@@ -1,29 +1,56 @@
 import '/style.css';
 import { resources } from './src/Resource.js';
 import { Sprite } from './src/Sprite';
+import { Vector2 } from './src/Vector2.js';
+import { GameLoop } from './src/GameLoop.js';
 
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
 
-const draw = () => {
-  const sky = resources.images.sky;
-  if (sky.isLoaded) {
-    ctx.drawImage(sky.image, 0, 0);
-  }
+const skySprite = new Sprite({
+  resource: resources.images.sky,
+  frameSize: new Vector2(320, 180) // can be used to define how long/tall something is
+})
 
-  const ground = resources.images.ground;
-  if (ground.isLoaded) {
-    ctx.drawImage(ground.image, 0, 0);
-  }
+const groundSprite = new Sprite({
+  resource: resources.images.ground,
+  frameSize: new Vector2(320, 180) // can be used to define how long/tall something is
+})
+
+const hero = new Sprite({
+  resource: resources.images.hero,
+  frameSize: new Vector2(32,32),
+  hFrames: 3,
+  vFrames: 8,
+  frame: 1
+})
+
+const shadow = new Sprite ({
+  resource: resources.images.shadow,
+  frameSize: new Vector2(32, 32)
+})
+
+const heroPos = new Vector2(16 * 6, 16 * 5); // grid size is 16, * changes pos
+
+const update = () => {
+  //Updating entities in the game
+  hero.frame += 1;
+  heroPos.x += 1;
+};
+
+
+const draw = () => {
+  skySprite.drawImage(ctx, 0, 0);
+  groundSprite.drawImage(ctx, 0,0);
+
+  // Center his feet because he isnt exactly 32x32 but fits in the 32x32 space
+  const heroOffset = new Vector2(-8, -21);
+  const heroPosX = heroPos.x+heroOffset.x; //applies nudge
+  const heroPosY = heroPos.y+1+heroOffset.y;
+
+  shadow.drawImage(ctx, heroPosX, heroPosY);
+  hero.drawImage(ctx, heroPosX, heroPosY);
 }
 
-  const hero = new Sprite({
-    resource: resources.images.hero,
-    hFrames: 3,
-    vFrames: 8,
-    frame: 1,
-  })
-
-setInterval(() => {
-  draw()
-}, 300)
+const gameLoop = new GameLoop(update, draw);
+gameLoop.start();
