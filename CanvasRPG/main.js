@@ -3,6 +3,7 @@ import { resources } from './src/Resource.js';
 import { Sprite } from './src/Sprite';
 import { Vector2 } from './src/Vector2.js';
 import { GameLoop } from './src/GameLoop.js';
+import { DOWN, Input, LEFT, RIGHT, UP } from './src/Input.js';
 
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
@@ -31,11 +32,27 @@ const shadow = new Sprite ({
 })
 
 const heroPos = new Vector2(16 * 6, 16 * 5); // grid size is 16, * changes pos
+const input = new Input();
+
 
 const update = () => {
   //Updating entities in the game
-  hero.frame += 1;
-  heroPos.x += 1;
+    if (input.direction === DOWN) {
+      heroPos.y += 1;
+      hero.frame = 0;
+    }
+    if (input.direction === UP) {
+      heroPos.y -= 1;
+      hero.frame = 6;
+    }
+    if (input.direction === LEFT) {
+      heroPos.x -= 1;
+      hero.frame = 9;
+    }
+    if (input.direction === RIGHT) {
+      heroPos.x += 1;
+      hero.frame = 3;
+    }
 };
 
 
